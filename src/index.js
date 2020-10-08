@@ -1,4 +1,7 @@
 module.exports = function toReadable (number) {
+  if (number === 0) {
+    return 'zero';
+  }
   let array = Array.from(number + '');
   let wordNumbers2 = { //числа от 10 до 19
     '0': 'ten',
@@ -14,7 +17,6 @@ module.exports = function toReadable (number) {
      };
 
   let wordNumbers1 = { // числа от 1 до 9 + то же для сотен
-    '0': '',
     '1': 'one',
     '2': 'two',
     '3': 'three',
@@ -27,7 +29,6 @@ module.exports = function toReadable (number) {
       };
 
   let wordNumbers3 = { // десятки
-    '0': '', // надо ли
     '2': 'twenty',
     '3': 'thirty',
     '4': 'forty',
@@ -44,58 +45,49 @@ module.exports = function toReadable (number) {
       units = wordNumbers1[array[array.length - 1]];
     }
     return units;
-  }
+  } 
 
-  let dozens;
-  if (array.length === 2) {
+
+  let dozens; // вторая с конца цифра (десятки)
+  if (array.length === 2) { // если полученное число состоит из двух цифр
     if (array[0] === '1') {
-      if (wordNumbers2.hasOwnProperty(array[array.length - 1])) {
-        dozens = wordNumbers2[array[array.length - 1]]
-        return dozens;
-      } else if (wordNumbers1.hasOwnProperty(array[array.length - 2])) {
-        secondNumber = wordNumbers3[array[array.length - 2]];
-        }
-      
-        if (wordNumbers1.hasOwnProperty(array[array.length - 1])) {
-          units = wordNumbers1[array[array.length - 1]];
-        }
+     dozens = wordNumbers2[array[array.length - 1]]
+     return dozens;
+    } else if (array[array.length - 1] === '0') {
+    dozens = wordNumbers3[array[array.length - 2]];
+    return dozens;
+    } else  if (array[array.length - 1] !== '0'){
+      dozens = wordNumbers3[array[array.length - 2]]; 
+      units = wordNumbers1[array[array.length - 1]];
+      return `${dozens} ${units}`;
+    }
+  }
+  
+  let hundreds; // третья с конца цифра (сотни)
+  if (array.length === 3) {
+   if (wordNumbers1.hasOwnProperty(array[array.length - 3])) {
+      hundreds = wordNumbers1[array[array.length - 3]];
+    }
+    if (array[array.length - 2] === '0' && array[array.length - 1] === '0') {
+      return `${hundreds} hundred`;
+     } else if (array[array.length - 2] === '0') {
+      units = wordNumbers1[array[array.length - 1]];
+      return `${hundreds} hundred ${units}`;
+     } else if (array[array.length - 2] === '1') {
+       dozens = wordNumbers2[array[array.length - 1]]
+       return `${hundreds} hundred ${dozens}`;
+      } else if (array[array.length - 1] === '0') {
+      dozens = wordNumbers3[array[array.length - 2]];
+      return `${hundreds} hundred ${dozens}`;
+      } else  {
+        dozens = wordNumbers3[array[array.length - 2]]; 
+        units = wordNumbers1[array[array.length - 1]];
+        return `${hundreds} hundred ${dozens} ${units}`;
+      }
 
-    return `${dozens} ${units}`;
   }
 
 
 
-    //  проверка от 11-19
-    if (array.length === 2 && array[0] === '1') {
-     for (let i = 1; i < array.length; i++) {
-     if (wordNumbers2.hasOwnProperty(array[i])) {
-   return wordNumbers2[array[i]];
-     }
-     }
-     }
 
-       
-     let firstNumber; // последнее число (единицы)
-       if (wordNumbers1.hasOwnProperty(array[array.length - 1])) {
-       firstNumber = wordNumbers1[array[array.length - 1]];
-       }
-     
-     let thirdNumber; // сотни
-       if (wordNumbers1.hasOwnProperty(array[array.length - 3])) {
-       thirdNumber = wordNumbers1[array[array.length - 3]] + ' hundred';
-       }
-
-
-       
-       let secondNumber; // второе число (десятки)
-       if (array[array.length - 2] === '1') {
-        if (wordNumbers2.hasOwnProperty(array[i])) {
-          secondNumber = wordNumbers2[array[i]];
-        } else if (wordNumbers1.hasOwnProperty(array[array.length - 2])) {
-       secondNumber = wordNumbers3[array[array.length - 2]];
-       }
-      }
-     
-     let result = `${thirdNumber} ${secondNumber} ${firstNumber}`.trim() ;
-     return result;
 }
